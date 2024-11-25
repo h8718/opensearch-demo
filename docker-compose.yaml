@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  opensearch:
+    image: opensearchproject/opensearch:${OPENSEARCH_VERSION}
+    restart: "${OPENSEARCH_RESTART:-unless-stopped}"
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node1
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
+      - "DISABLE_SECURITY_PLUGIN=true"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "${HOST_OPENSEARCH_PORT:-9200}:9200"
+      - "${HOST_OPENSEARCH_PORT2:-9300}:9300"
+    command: ["opensearch", "-Elogger.level=${OPENSEARCH_LOG_LEVEL:-INFO}"]
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+
+  go:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "${HOST_GO_PORT:-8070}:8070"
+    environment:
+      - OPENSEARCH_URL=http://opensearch:9200
+      - PORT=8070
+    depends_on:
+      - opensearch
+
+volumes:
+  opensearch-data:
