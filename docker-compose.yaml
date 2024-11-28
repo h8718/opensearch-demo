@@ -12,6 +12,7 @@ services:
       - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
       - "DISABLE_SECURITY_PLUGIN=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "OPENSEARCH_JAVA_OPTS=-Dopensearch.experimental.feature.telemetry.enabled=true"
     ulimits:
       memlock:
         soft: -1

@@ -79,7 +79,7 @@ func main() {
 		}
 
 		// Perform search in OpenSearch
-		results, err := searchOpenSearch(client, query)
+		results, err := searchOpenSearch(r.Context(), client, query)
 		if err != nil {
 			sendJSONResponse(w, http.StatusInternalServerError, jsonResponse{
 				Error: fmt.Sprintf("Search failed: %v", err),
@@ -144,7 +144,7 @@ func testOpenSearchConnection(client *opensearch.Client) bool {
 }
 
 // searchOpenSearch performs a search query in OpenSearch and returns the results.
-func searchOpenSearch(client *opensearch.Client, query string) (string, error) {
+func searchOpenSearch(ctx context.Context, client *opensearch.Client, query string) (string, error) {
 	searchBody := fmt.Sprintf(`{
 		"query": {
 			"match": {
@@ -154,7 +154,7 @@ func searchOpenSearch(client *opensearch.Client, query string) (string, error) {
 	}`, query)
 
 	res, err := client.Search(
-		client.Search.WithContext(context.Background()),
+		client.Search.WithContext(ctx),
 		client.Search.WithIndex("documents"),
 		client.Search.WithBody(strings.NewReader(searchBody)),
 	)
