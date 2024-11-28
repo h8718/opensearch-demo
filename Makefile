@@ -1,4 +1,5 @@
 OPENSEARCH_VERSION := 2.9.0
+PORT := 8070
 
 .PHONY: all
 all: down up
@@ -9,4 +10,4 @@ down:
 
 .PHONY: up
 up:
-	OPENSEARCH_VERSION=$(OPENSEARCH_VERSION) docker-compose up --build
+	OPENSEARCH_VERSION=$(OPENSEARCH_VERSION) PORT=$(PORT) docker-compose up --build
